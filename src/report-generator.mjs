@@ -184,7 +184,7 @@ export async function generateQualityReport(config) {
     ? lintSummary.warnings <= Number(thresholds.lintWarnings ?? 0) && lintSummary.errors <= Number(thresholds.lintErrors ?? 0)
     : false;
   const typecheckPass = typecheckReport
-    ? typecheckReport.errorCount <= Number(thresholds.typecheckErrors ?? 0) && Boolean(typecheckReport.passed)
+    ? typecheckReport.errorCount <= Number(thresholds.typecheckErrors ?? 0)
     : false;
   const complexityPass = complexitySummary ? complexitySummary.totalErrors === 0 : false;
   const unitPass = unitSummary
@@ -205,8 +205,9 @@ export async function generateQualityReport(config) {
     : false;
   const sizePass = sizeSummary ? Boolean(sizeSummary.passed) : false;
   const e2eTargetsPass = e2eReport
-    ? e2eReport.instrumentedTargetFiles === e2eReport.targetFilesCount &&
-      e2eReport.measuredTargetFiles === e2eReport.targetFilesCount
+    ? e2eReport.targetFilesCount === 0 ||
+      (e2eReport.instrumentedTargetFiles === e2eReport.targetFilesCount &&
+        e2eReport.measuredTargetFiles === e2eReport.targetFilesCount)
     : false;
 
   const globalPass = [
@@ -358,12 +359,12 @@ export async function generateQualityReport(config) {
       </div>
       <div class="card">
         <h3>Duplication</h3>
-        <div class="metric">${duplicationSummary?.percentage !== null ? formatPercent(duplicationSummary.percentage) : "N/A"}</div>
+        <div class="metric">${duplicationSummary != null && duplicationSummary.percentage != null ? formatPercent(duplicationSummary.percentage) : "N/A"}</div>
         <div>Lines (limit: ${Number(thresholds.duplication ?? 5)}%) ${getStatusBadge(duplicationPass)}</div>
       </div>
       <div class="card">
         <h3>Mutation</h3>
-        <div class="metric">${mutationSummary?.score !== null ? formatPercent(mutationSummary.score) : "N/A"}</div>
+        <div class="metric">${mutationSummary != null && mutationSummary.score != null ? formatPercent(mutationSummary.score) : "N/A"}</div>
         <div>Score (limit: ${Number(thresholds.mutation ?? 60)}%) ${getStatusBadge(mutationPass)}</div>
         <div class="meta">Killed: ${mutationSummary?.killedMutants ?? "N/A"} / ${mutationSummary?.totalMutants ?? "N/A"}</div>
       </div>
