@@ -103,40 +103,56 @@ export async function runE2ECoverageCheck({ reportDir, browserCoverageDir, targe
       functions: 0
     };
 
-    for (const relativeFile of targetFiles) {
-      const absoluteFile = normalizeAbsolutePath(path.join(process.cwd(), relativeFile));
-      const isInstrumented = measuredCoverageFiles.has(absoluteFile);
-      const summary = isInstrumented
-        ? coverageMap.fileCoverageFor(absoluteFile).toSummary()
-        : createCoverageSummary();
-
-      const plainSummary = toPlainSummary(summary);
-
-      if (isInstrumented) {
+    if (targetFiles.length === 0) {
+      // No target files specified: aggregate all instrumented files
+      for (const filePath of coverageMap.files()) {
+        const summary = coverageMap.fileCoverageFor(filePath).toSummary();
+        const plainSummary = toPlainSummary(summary);
+        aggregateTotals = {
+          lines: aggregateTotals.lines + plainSummary.lines.total,
+          statements: aggregateTotals.statements + plainSummary.statements.total,
+          functions: aggregateTotals.functions + plainSummary.functions.total
+        };
+        totalSummary.merge(summary);
         instrumentedTargetFiles += 1;
-      }
-
-      if (
-        plainSummary.lines.total > 0 ||
-        plainSummary.statements.total > 0 ||
-        plainSummary.functions.total > 0 ||
-        plainSummary.branches.total > 0
-      ) {
         measuredTargetFiles += 1;
       }
+    } else {
+      for (const relativeFile of targetFiles) {
+        const absoluteFile = normalizeAbsolutePath(path.join(process.cwd(), relativeFile));
+        const isInstrumented = measuredCoverageFiles.has(absoluteFile);
+        const summary = isInstrumented
+          ? coverageMap.fileCoverageFor(absoluteFile).toSummary()
+          : createCoverageSummary();
 
-      aggregateTotals = {
-        lines: aggregateTotals.lines + plainSummary.lines.total,
-        statements: aggregateTotals.statements + plainSummary.statements.total,
-        functions: aggregateTotals.functions + plainSummary.functions.total
-      };
+        const plainSummary = toPlainSummary(summary);
 
-      totalSummary.merge(summary);
-      fileSummaries.push({
-        file: relativeFile,
-        instrumented: isInstrumented,
-        summary: plainSummary
-      });
+        if (isInstrumented) {
+          instrumentedTargetFiles += 1;
+        }
+
+        if (
+          plainSummary.lines.total > 0 ||
+          plainSummary.statements.total > 0 ||
+          plainSummary.functions.total > 0 ||
+          plainSummary.branches.total > 0
+        ) {
+          measuredTargetFiles += 1;
+        }
+
+        aggregateTotals = {
+          lines: aggregateTotals.lines + plainSummary.lines.total,
+          statements: aggregateTotals.statements + plainSummary.statements.total,
+          functions: aggregateTotals.functions + plainSummary.functions.total
+        };
+
+        totalSummary.merge(summary);
+        fileSummaries.push({
+          file: relativeFile,
+          instrumented: isInstrumented,
+          summary: plainSummary
+        });
+      }
     }
 
     const plainTotal = toPlainSummary(totalSummary);
