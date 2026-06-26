@@ -96,7 +96,7 @@ function summarizeDuplication(jscpdReport) {
   }
 
   let duplicationPct = null;
-  if (stats.total?.percentage) {
+  if (stats.total?.percentage != null) {
     duplicationPct = Number(stats.total.percentage);
   } else if (stats.formats) {
     const formats = Object.values(stats.formats);

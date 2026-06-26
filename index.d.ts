@@ -26,6 +26,7 @@ export interface QualityConfig {
   checks: QualityCheckDefinition[];
   paths?: {
     typecheckCommand?: string;
+    lintCommand?: string;
   };
   size?: {
     rootDir?: string;
