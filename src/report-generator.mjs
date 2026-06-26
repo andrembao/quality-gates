@@ -197,10 +197,10 @@ export async function generateQualityReport(config) {
       e2eReport.total.functions.pct >= Number(thresholds.e2eCoverage ?? 50) &&
       e2eReport.total.lines.pct >= Number(thresholds.e2eCoverage ?? 50)
     : false;
-  const duplicationPass = duplicationSummary?.percentage !== null
+  const duplicationPass = duplicationSummary != null && duplicationSummary.percentage != null
     ? duplicationSummary.percentage <= Number(thresholds.duplication ?? 5)
     : false;
-  const mutationPass = mutationSummary?.score !== null
+  const mutationPass = mutationSummary != null && mutationSummary.score != null
     ? mutationSummary.score >= Number(thresholds.mutation ?? 60)
     : false;
   const sizePass = sizeSummary ? Boolean(sizeSummary.passed) : false;
