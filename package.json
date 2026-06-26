@@ -1,0 +1,47 @@
+{
+  "name": "@andrembao/quality-gates",
+  "version": "0.1.0",
+  "description": "Reusable quality gate pipeline and HTML report generator for Node/TypeScript projects.",
+  "license": "MIT",
+  "author": "andrembao",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrembao/quality-gates"
+  },
+  "homepage": "https://github.com/andrembao/quality-gates#readme",
+  "bugs": {
+    "url": "https://github.com/andrembao/quality-gates/issues"
+  },
+  "type": "module",
+  "types": "./index.d.ts",
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE",
+    "index.d.ts"
+  ],
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/quality-runner.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "quality-run": "./bin/quality-run.mjs",
+    "quality-report": "./bin/quality-report.mjs",
+    "quality-check-typecheck": "./bin/quality-check-typecheck.mjs",
+    "quality-check-size": "./bin/quality-check-size.mjs",
+    "quality-check-e2e": "./bin/quality-check-e2e.mjs"
+  },
+  "dependencies": {
+    "istanbul-lib-coverage": "^3.2.2",
+    "typescript": "^5.4.5"
+  }
+}
